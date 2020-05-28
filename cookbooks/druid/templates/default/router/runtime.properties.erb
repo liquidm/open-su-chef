@@ -1,0 +1,21 @@
+druid.service=<%= node[:druid][:router][:service] %>
+druid.plaintextPort=<%= node[:druid][:router][:port] %>
+
+# HTTP proxy
+druid.router.http.numConnections=50
+druid.router.http.readTimeout=PT5M
+druid.router.http.numMaxThreads=100
+druid.server.http.numThreads=100
+
+# Management proxy to coordinator / overlord: required for unified web console.
+druid.router.managementProxy.enabled=true
+druid.router.defaultBrokerServiceName=<%= node[:druid][:broker][:service] %>
+druid.router.coordinatorServiceName=<%= node[:druid][:coordinator][:service] %>
+
+druid.monitoring.monitors=<%= %w{
+  org.apache.druid.java.util.metrics.SysMonitor
+  org.apache.druid.java.util.metrics.JvmMonitor
+  org.apache.druid.java.util.metrics.JvmCpuMonitor
+  org.apache.druid.java.util.metrics.CpuAcctDeltaMonitor
+  org.apache.druid.java.util.metrics.JvmThreadsMonitor
+} %>

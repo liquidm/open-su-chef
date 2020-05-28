@@ -1,0 +1,25 @@
+[Unit]
+Description=Apache Druid <%= @druid_node %> daemon
+Wants=consul.service
+After=consul.service
+
+[Service]
+User=druid
+Group=druid
+Environment=CLASSPATH=<%= @classpath %>
+ExecStart=/bin/bash -l -c "exec /usr/bin/java `cat /var/app/druid/current/config/<%= @druid_node %>/jvm.config | xargs` -cp ${CLASSPATH} org.apache.druid.cli.Main server <%= @druid_node %>"
+<% if @check_stop %>
+ExecStop=<%= @check_stop %>
+<% end %>
+SyslogIdentifier=druid-<%= @druid_node %>
+OOMScoreAdjust=<%= @druid_oom_score %>
+Nice=<%= @druid_nice %>
+Restart=always
+LimitNPROC=65536
+LimitNOFILE=infinity
+LimitFSIZE=infinity
+TasksMax=100000
+TimeoutSec=45min
+
+[Install]
+WantedBy=multi-user.target

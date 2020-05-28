@@ -1,0 +1,62 @@
+druid.host=<%= node[:fqdn] %>
+
+druid.extensions.loadList=<%= (node[:druid][:core_extensions] + node[:druid][:extensions].split).compact.to_json %>
+druid.extensions.directory=<%= %x{readlink -f /var/app/druid/current/extensions}.chomp %>
+druid.extensions.hadoopDependenciesDir=<%= %x{readlink -f /var/app/druid/current/hadoop-dependencies}.chomp %>
+
+druid.startup.logging.logProperties=true
+
+druid.zk.service.host=<%= zookeeper_connect(node[:druid][:zookeeper][:root], node[:druid][:zookeeper][:cluster]) %>
+druid.zk.paths.base=/druid
+druid.zk.paths.indexer.base=/druid/indexer.<%= node[:druid][:cluster] %>
+druid.zk.service.sessionTimeoutMs=<%=node[:druid][:zookeeper][:timeout] %>
+druid.discovery.curator.path=<%= node[:druid][:zookeeper][:discovery] %>
+druid.curator.compress=true
+
+druid.metadata.storage.type=<%= node[:druid][:database][:type] %>
+druid.metadata.storage.connector.connectURI=<%= node[:druid][:database][:uri] %>
+druid.metadata.storage.connector.user=<%= node[:druid][:database][:user] %>
+druid.metadata.storage.connector.password=<%= node[:druid][:database][:password] %>
+druid.metadata.storage.tables.tasks=druid_tasks_<%= node[:druid][:cluster] %>
+druid.metadata.storage.tables.taskLog=druid_taskLog_<%= node[:druid][:cluster] %>
+druid.metadata.storage.tables.taskLock=druid_taskLock_<%= node[:druid][:cluster] %>
+druid.metadata.storage.tables.supervisors=druid_supervisors_<%= node[:druid][:cluster] %>
+
+druid.storage.type=s3
+druid.storage.bucket=druid
+druid.storage.baseKey=<%= node[:druid][:cluster] %>
+druid.s3.accessKey=yourkey
+druid.s3.secretKey=yoursecret
+druid.s3.protocol=http
+druid.s3.enablePathStyleAccess=true
+druid.s3.endpoint.signingRegion=us-east-1
+druid.s3.endpoint.url=http://minio.service.consul:9000/
+
+# looks like it crashes if this is not initialized
+druid.storage.storageDirectory=<%= node[:druid][:storage][:hdfs] %>
+
+druid.indexer.logs.type=noop
+
+druid.indexer.task.defaultHadoopCoordinates=["org.apache.hadoop:hadoop-client:<%= node[:druid][:hadoop][:version] %>"]
+
+druid.selectors.indexing.serviceName=<%= node[:druid][:indexer][:service] %>
+druid.selectors.coordinator.serviceName=<%= node[:druid][:coordinator][:service] %>
+
+druid.emitter=statsd
+druid.emitter.statsd.hostname=localhost
+druid.emitter.statsd.port=8125
+druid.emitter.statsd.prefix=druid
+
+druid.indexing.doubleStorage=double
+
+druid.announcer.type=http
+druid.serverview.type=http
+
+druid.server.http.gracefulShutdownTimeout=PT10S
+druid.server.http.unannouncePropagationDelay=PT10S
+druid.server.hiddenProperties=["druid.s3.accessKey","druid.s3.secretKey","druid.metadata.storage.connector.password"]
+
+druid.sql.enable=true
+druid.javascript.enabled=true
+
+druid.lookup.enableLookupSyncOnStartup=false

@@ -1,0 +1,44 @@
+druid.service=<%= node[:druid][:historical][:service] %>
+druid.plaintextPort=<%= node[:druid][:historical][:port] %>
+
+druid.server.http.numThreads=255
+druid.server.maxSize=<%= node[:druid][:historical][:storageSize] %>
+druid.server.tier=<%= node[:druid][:historical][:tier] %>
+druid.server.priority=<%= node[:druid][:historical][:priority] %>
+
+druid.processing.buffer.sizeBytes=<%= node[:druid][:historical][:mergeBufferSize] %>
+druid.processing.numMergeBuffers=<%= node[:druid][:historical][:numMergeBuffers] %>
+druid.processing.numThreads=<%= node[:druid][:historical][:numThreads] %>
+druid.processing.tmpDir=/var/app/druid/storage/tmp/historical
+
+druid.segmentCache.locations=[{"path": "/var/app/druid/storage/segment_cache", "maxSize": <%= node[:druid][:historical][:storageSize] %> }]
+druid.segmentCache.infoDir=/var/app/druid/storage/info
+druid.segmentCache.numLoadingThreads=<%= [node[:cpu][:total] / 4,4].max %>
+
+druid.coordinator.loadqueuepeon.curator.numCallbackThreads=4
+
+druid.historical.cache.useCache=true
+druid.historical.cache.populateCache=true
+
+<% if memcached_nodes(node[:druid][:cache][:memcache_cluster]).any? %>
+druid.cache.type=memcached
+druid.cache.hosts=<%= memcached_nodes(node[:druid][:cache][:memcache_cluster]).map { |n| "#{n[:ipaddress]}:11211" }.join(",") %>
+druid.cache.maxObjectSize=10485760
+druid.cache.timeout=1000
+druid.cache.numConnections=<%= node[:druid][:cache][:numThreads] %>
+<% else %>
+druid.cache.type=caffeine
+druid.cache.sizeInBytes=<%= node[:druid][:cache][:caffeineSize] %>
+druid.cache.evictOnClose=true
+<% end %>
+
+druid.monitoring.monitors=<%= %w{
+  org.apache.druid.client.cache.CacheMonitor
+  org.apache.druid.java.util.metrics.SysMonitor
+  org.apache.druid.server.metrics.HistoricalMetricsMonitor
+  org.apache.druid.java.util.metrics.JvmMonitor
+  org.apache.druid.java.util.metrics.JvmCpuMonitor
+  org.apache.druid.java.util.metrics.CpuAcctDeltaMonitor
+  org.apache.druid.java.util.metrics.JvmThreadsMonitor
+  org.apache.druid.server.metrics.QueryCountStatsMonitor
+} %>

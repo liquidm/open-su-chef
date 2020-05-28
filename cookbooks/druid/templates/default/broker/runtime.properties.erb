@@ -1,0 +1,26 @@
+druid.service=<%= node[:druid][:broker][:service] %>
+druid.plaintextPort=<%= node[:druid][:broker][:port] %>
+druid.broker.select.tier=<%= node[:druid][:broker][:tier] %>
+
+druid.server.http.numThreads=255
+
+druid.broker.http.numConnections=64
+druid.broker.http.maxQueuedBytes=10000000
+
+druid.processing.buffer.sizeBytes=<%= node[:druid][:broker][:mergeBufferSize] %>
+druid.processing.numMergeBuffers=<%= node[:druid][:broker][:numMergeBuffers] %>
+druid.processing.numThreads=<%= node[:druid][:broker][:numThreads] %>
+druid.processing.tmpDir=/var/app/druid/storage/tmp/historical
+
+druid.broker.cache.useCache=false
+druid.broker.cache.populateCache=false
+
+druid.monitoring.monitors=<%= %w{
+  org.apache.druid.client.cache.CacheMonitor
+  org.apache.druid.java.util.metrics.SysMonitor
+  org.apache.druid.java.util.metrics.JvmMonitor
+  org.apache.druid.java.util.metrics.JvmCpuMonitor
+  org.apache.druid.java.util.metrics.CpuAcctDeltaMonitor
+  org.apache.druid.java.util.metrics.JvmThreadsMonitor
+  org.apache.druid.server.metrics.QueryCountStatsMonitor
+} %>

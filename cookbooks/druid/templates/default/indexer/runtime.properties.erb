@@ -1,0 +1,26 @@
+druid.service=<%= node[:druid][:indexer][:service] %>
+druid.plaintextPort=<%= node[:druid][:indexer][:port] %>
+
+druid.worker.capacity=<%= node[:druid][:indexer][:worker] %>
+druid.worker.category=<%= node[:druid][:indexer][:category] %>
+druid.worker.version=1
+
+druid.server.http.numThreads=255
+
+druid.server.tier=<%= node[:druid][:indexer][:tier] %>
+
+druid.indexer.task.baseDir=/var/app/druid/storage/indexer
+druid.indexer.task.baseTaskDir=<%= node[:druid][:indexer][:task_dir] %>
+druid.indexer.task.hadoopWorkingPath=/var/app/druid/storage/tmp/indexer/hadoop
+druid.processing.tmpDir=/var/app/druid/storage/tmp/indexer
+druid.indexer.tasklock.forceTimeChunkLock=true
+
+druid.processing.buffer.sizeBytes=<%= node[:druid][:indexer][:mergeBufferSize] %>
+druid.processing.numMergeBuffers=<%= node[:druid][:indexer][:numMergeBuffers] %>
+druid.processing.numThreads=<%= node[:druid][:indexer][:numThreads] %>
+
+druid.selectors.indexing.serviceName=<%= node[:druid][:coordinator][:overlord_service] %>
+
+druid.cache.type=caffeine
+druid.cache.sizeInBytes=<%= node[:druid][:cache][:caffeineSize] %>
+druid.cache.evictOnClose=true

@@ -1,0 +1,24 @@
+-server
+-d64
+-Duser.timezone=UTC
+-Dfile.encoding=UTF-8
+-Djava.library.path=/var/app/hadoop2/current/lib/native
+-Xmx<%= node[:druid][@druid_node][:mx] %>
+-Xms<%= node[:druid][@druid_node][:mx] %>
+-XX:MaxDirectMemorySize=<%= node[:druid][@druid_node][:dm] %>
+-XX:MaxNewSize=<%= node[:druid][@druid_node][:max_new_size] %>
+-XX:+UseCompressedOops
+-XX:+UseG1GC
+-XX:MaxGCPauseMillis=200
+-XX:ParallelGCThreads=<%= node[:druid][@druid_node][:numThreads] %>
+-XX:ConcGCThreads=<%= node[:druid][@druid_node][:numThreads]  %>
+<% unless node[:druid][@druid_node][:use_default_gc_settings] %>
+-XX:InitiatingHeapOccupancyPercent=<%= node[:druid][@druid_node][:init_heap_occupancy] || node[:druid][:init_heap_occupancy] %>
+-XX:G1HeapWastePercent=<%= node[:druid][@druid_node][:heap_waste_percent] || node[:druid][:heap_waste_percent] %>
+<% end %>
+-Djava.io.tmpdir=/var/app/druid/storage/tmp/<%= @druid_node %>
+-XX:+ExitOnOutOfMemoryError
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:ErrorFile=/var/app/druid/shared/error_dump/<%= @druid_node %>_%p.log
+-XX:HeapDumpPath=/var/app/druid/shared/error_dump
+-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager
