@@ -36,6 +36,7 @@ node_types = %i{
   /var/app/druid/storage/indexer
   /var/app/druid/storage/middleManager
   #{node[:druid][:indexer][:task_dir]}
+  #{node[:druid][:middleManager][:task_dir]}
 )).flatten.each do |dir|
   directory dir do
     owner "druid"

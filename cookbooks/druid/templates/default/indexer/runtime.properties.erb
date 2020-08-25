@@ -24,3 +24,11 @@ druid.selectors.indexing.serviceName=<%= node[:druid][:coordinator][:overlord_se
 druid.cache.type=caffeine
 druid.cache.sizeInBytes=<%= node[:druid][:cache][:caffeineSize] %>
 druid.cache.evictOnClose=true
+
+druid.monitoring.monitors=<%= %w{
+  org.apache.druid.java.util.metrics.SysMonitor
+  org.apache.druid.java.util.metrics.JvmMonitor
+  org.apache.druid.java.util.metrics.JvmCpuMonitor
+  org.apache.druid.java.util.metrics.CpuAcctDeltaMonitor
+  org.apache.druid.java.util.metrics.JvmThreadsMonitor
+} %>

@@ -1,5 +1,5 @@
 default[:druid][:git][:repository]                  = "https://github.com/apache/druid"
-default[:druid][:git][:revision]                    = "0.18.1"
+default[:druid][:git][:revision]                    = "0.19.0"
 
 
 default[:druid][:core_extensions]                   = %w{
@@ -54,15 +54,16 @@ default[:druid][:historical][:storageSize]          = 1000000000
 default[:druid][:middleManager][:service]           = "#{node[:druid][:cluster]}/middleManager"
 default[:druid][:middleManager][:category]          = node.consul_dc
 default[:druid][:middleManager][:port]              = 8091
-default[:druid][:middleManager][:nice]              = 1
-default[:druid][:middleManager][:oom_score]         = 1
+default[:druid][:middleManager][:nice]              = 10
+default[:druid][:middleManager][:oom_score]         = 10
 default[:druid][:middleManager][:worker]            = node[:cpu][:total] / 4
 default[:druid][:middleManager][:numThreads]        = 3
-default[:druid][:middleManager][:numMergeBuffers]   = 2
-default[:druid][:middleManager][:mergeBufferSize]   = node[:druid][:mergeBufferSize] / 2
+default[:druid][:middleManager][:numMergeBuffers]   = 1
+default[:druid][:middleManager][:mergeBufferSize]   = 52428800
 default[:druid][:middleManager][:mx]                = "128m"
 default[:druid][:middleManager][:dm]                = "#{((node[:druid][:middleManager][:mergeBufferSize] * (node[:druid][:middleManager][:numThreads] + node[:druid][:middleManager][:numMergeBuffers] + 1)) / 1024 / 1024 / 1024).ceil + 4}g"
 default[:druid][:middleManager][:max_new_size]      = "#{node[:druid][:middleManager][:mx].to_i / 2}m"
+default[:druid][:middleManager][:task_dir]          = "/var/app/druid/storage/tmp/middleManager/task"
 
 default[:druid][:indexer][:service]                 = "#{node[:druid][:cluster]}/indexer"
 default[:druid][:indexer][:category]                = node.consul_dc
@@ -74,7 +75,7 @@ default[:druid][:indexer][:worker]                  = node[:cpu][:total] / 2
 default[:druid][:indexer][:numThreads]              = node[:cpu][:total] / 2
 default[:druid][:indexer][:mergeBufferSize]         = node[:druid][:mergeBufferSize]
 default[:druid][:indexer][:numMergeBuffers]         = node[:druid][:indexer][:numThreads]
-default[:druid][:indexer][:mx]                      = "#{node[:druid][:indexer][:numThreads] + (node[:druid][:cache][:caffeineSize]/1024/1024/1024) + 1}g"
+default[:druid][:indexer][:mx]                      = "#{node[:druid][:indexer][:numThreads] + (node[:druid][:cache][:caffeineSize]/1024/1024/1024)}g"
 default[:druid][:indexer][:dm]                      = "#{((node[:druid][:indexer][:mergeBufferSize] * (node[:druid][:indexer][:numThreads] + node[:druid][:indexer][:numMergeBuffers] + 1)) / 1024 / 1024 / 1024).ceil + 4}g"
 default[:druid][:indexer][:max_new_size]            = "#{node[:druid][:indexer][:mx].to_i / 2}m"
 default[:druid][:indexer][:task_dir]                = "/var/app/druid/storage/tmp/indexer/task"

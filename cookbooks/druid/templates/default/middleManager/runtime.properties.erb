@@ -7,14 +7,14 @@ druid.worker.version=1
 
 druid.server.http.numThreads=60
 
-druid.indexer.runner.javaOpts=-server -d64 -Xmx3g -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Dfile.encoding=UTF-8 -XX:+ExitOnOutOfMemoryError -XX:+UseCompressedOops
+druid.indexer.runner.javaOpts=-server -d64 -Xmx16g -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Dfile.encoding=UTF-8 -XX:+ExitOnOutOfMemoryError -XX:+UseCompressedOops
 
 druid.indexer.fork.property.druid.processing.numMergeBuffers=<%= node[:druid][:middleManager][:numMergeBuffers] %>
 druid.indexer.fork.property.druid.processing.buffer.sizeBytes=<%= node[:druid][:middleManager][:mergeBufferSize] %>
 druid.indexer.fork.property.druid.processing.numThreads=<%= node[:druid][:middleManager][:numThreads] %>
 
 druid.indexer.task.baseDir=/var/app/druid/storage/middleManager
-druid.indexer.task.baseTaskDir=/var/app/druid/storage/tmp/middleManager/task
+druid.indexer.task.baseTaskDir=<%= node[:druid][:middleManager][:task_dir] %>
 druid.indexer.task.hadoopWorkingPath=/var/app/druid/storage/tmp/middleManager/hadoop
 druid.processing.tmpDir=/var/app/druid/storage/tmp/middleManager
 
@@ -29,5 +29,4 @@ druid.monitoring.monitors=<%= %w{
   org.apache.druid.java.util.metrics.JvmCpuMonitor
   org.apache.druid.java.util.metrics.CpuAcctDeltaMonitor
   org.apache.druid.java.util.metrics.JvmThreadsMonitor
-  org.apache.druid.server.metrics.QueryCountStatsMonitor
 } %>
